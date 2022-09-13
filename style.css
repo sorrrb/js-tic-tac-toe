@@ -14,6 +14,67 @@ body {
   align-items: center;
 }
 
+button:hover {
+  cursor: pointer;
+}
+
+.menu {
+  background-color: hsla(0, 0%, 0%, 0.5);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  z-index: 1;
+  visibility: hidden;
+}
+
+.menu-ui {
+  background-color: #BCBCBC;
+  border: 1px solid #EFEFEF;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  margin: 5% auto;
+  padding: 0% 8px;
+  padding-top: 8px;
+  padding-bottom: 5%;
+  width: 50%;
+  min-width: fit-content;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+}
+
+.menu-buttons button {
+  background-color: #4D5C58E9;
+  border: none;
+  border-radius: 4px;
+  color: #EFEFEF;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.25rem;
+  padding: 8px 24px;
+}
+
+.menu-buttons hr {
+  border: none;
+  outline: 1px solid #55555550;
+  width: 75%;
+}
+
+.menu-close {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.menu-close > img:hover {
+  cursor: pointer;
+}
+
 .ui-wrapper {
   display: grid;
   grid-template-columns: repeat(11, 1fr);
@@ -46,6 +107,10 @@ body {
   justify-self: center;
 }
 
+.button-wrapper > button {
+  align-self: flex-start;
+}
+
 .player > p {
   color: #555555;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
@@ -57,10 +122,6 @@ body {
 .player > h1 {
   color: #4D5C58;
   text-align: center;
-}
-
-.button-wrapper > button:hover {
-  cursor: pointer;
 }
 
 .player {
