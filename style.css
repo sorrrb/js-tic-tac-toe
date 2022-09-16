@@ -60,7 +60,6 @@ Header/Footer
 .game-header {
   background-color: #FDEADA;
   display: flex;
-  justify-content: space-between;
   align-items: center;
   padding-left: 36px;
   padding-right: 64px;
@@ -69,15 +68,8 @@ Header/Footer
 }
 
 .game-header > h1 {
-  font-size: 6rem;
-  letter-spacing: 4px;
-}
-
-.game-header > img {
-  background-color: #444F5C33;
-  border: 2px solid #FDEADA66;
-  border-radius: 50%;
-  padding: 12px;
+  font-size: 5rem;
+  letter-spacing: 16px;
 }
 
 .game-footer {
@@ -180,6 +172,10 @@ Player Profiles
   margin-bottom: 32px;
 }
 
+.profile-head > img:hover {
+  cursor: pointer;
+}
+
 .profile h2 {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-size: 2.5rem;
@@ -197,6 +193,10 @@ Player Profiles
   border: none;
   outline: 1px solid #444F5C;
   width: 75%;
+}
+
+.name-field {
+  font-size: 2rem;
 }
 
 /* ----------------------- 

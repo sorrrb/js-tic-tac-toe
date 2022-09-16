@@ -3,7 +3,7 @@ const displayController = (() => {
   let playerTwo = null;
   let playerAI = null;
 
-  let isGameActive = null;
+  let isGameActive = false;
   let turnCount = null;
   let activeMark = null;
 
@@ -21,13 +21,45 @@ const displayController = (() => {
     endScreen.style.visibility = `hidden`;
   })
 
+  const nameEditButtons = document.querySelectorAll(`div.profile-head > img`);
+  nameEditButtons.forEach((button) => {
+    button.addEventListener('click', changeName);
+  })
+
+  function changeName(e) {
+    const inputField = document.createElement(`input`);
+    inputField.setAttribute('size', '8');
+    inputField.classList.add('name-field');
+    const nodeToReplace = ((e.target).parentNode).previousElementSibling;
+    const refID = nodeToReplace.getAttribute(`id`);
+    inputField.setAttribute(`id`, refID);
+    const refNode = nodeToReplace.parentNode;
+    refNode.replaceChild(inputField, nodeToReplace);
+    
+    inputField.addEventListener('keydown', (e) => {
+      console.log(e.key);
+      if (e.key === `Enter`) {
+        const storeName = e.target.value;
+        const referenceID = inputField.getAttribute(`id`);
+        const newHead = document.createElement(`h2`);
+        newHead.setAttribute(`id`, referenceID);
+        const replaceRef = e.target.parentNode;
+        replaceRef.replaceChild(newHead, inputField);
+        newHead.textContent = storeName;
+        this.removeEventListener('keydown', arguments.callee);
+      }
+      else return;
+    })
+  }
+
   // Event Listener callbacks
   function startCallback(e) {
     turnCount = 1;
 
-    if(isGameActive) {
+    if(isGameActive || typeof(isGameActive) === `object`) {
       gameBoard.resetBoard();
       e.target.textContent = `START`;
+      isGameActive = false;
     }
 
     else {
@@ -55,9 +87,9 @@ const displayController = (() => {
           if (isGameOver) {
             const winMessage = document.querySelector(`.result-message`);
             const sideMessage = (document.querySelector(`div.result-card`).lastElementChild);
-            winMessage.textContent = (activeMark === playerOne.mark ? `Player One Wins!` : `Player Two Wins!`);
+            winMessage.textContent = (activeMark === playerOne.mark ? `${playerOne.name} Wins!` : `${playerTwo.name} Wins!`);
             sideMessage.textContent = `Thanks for playing!`
-            isGameActive = false;
+            isGameActive = null;
             endScreen.style.visibility = `visible`;
           }
           else if (typeof(isGameOver) === 'object') {
@@ -65,7 +97,7 @@ const displayController = (() => {
             const sideMessage = (document.querySelector(`div.result-card`).lastElementChild);
             winMessage.textContent = `It's a Draw!`;
             sideMessage.textContent = `Play again?`
-            isGameActive = false;
+            isGameActive = null;
             endScreen.style.visibility = `visible`;
           }
           else {

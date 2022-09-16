@@ -4,10 +4,10 @@ A webpage implementation of a basic Tic-Tac-Toe game<br>
 [Live Demo](https://sorrrb.github.io/js-tic-tac-toe/)
 
 ## Demo Preview
-![Game Demo]()
+![Game Demo](./assets/demopreview.png)
 
 ### Changelog
-N/A
+9/16/2022 17:56 - complete functionality of Tic-Tac-Toe for manual play 
 
 ### Languages
 - HTML
@@ -17,6 +17,7 @@ N/A
 ### Concepts
 
 ## Attribution(s)
-- Backdrop image by [Marian Luzi](https://unsplash.com/@marianluzi) on Unsplash
 
 #### To-Do
+- Computer Play<br>
+- Challenge Mode<br>
