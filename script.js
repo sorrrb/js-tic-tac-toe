@@ -1,116 +1,187 @@
-const gameBoard = (() => {
-  let playingBoard = [``, ``, ``, ``, ``, ``, ``, ``, ``]; // zero-based 0-8
-  const sendMoveToBoard = (index, marker) => {
-    playingBoard[index] = marker;
-  };
+const displayController = (() => {
+  let playerOne = null;
+  let playerTwo = null;
+  let playerAI = null;
 
-  const clearPlayingBoard = () => {
-    playingBoard = [``, ``, ``, ``, ``, ``, ``, ``, ``];
-  }
+  let isGameActive = null;
+  let turnCount = null;
+  let activeMark = null;
 
-  const checkEnd = () => {
+  const boardNode = document.querySelector(`div.gameboard`);
+  boardNode.addEventListener('click', drawCallback);
+  
+  const gameCells = document.querySelectorAll(`div.gamecell`);
 
-    let boardReference = playingBoard.slice();
+  const startButton = document.querySelector(`button.gameboard-button`);
+  startButton.addEventListener('click', startCallback);
 
-    if ((boardReference[0]) && (boardReference[0] === boardReference[1]) && (boardReference[1] === boardReference[2])) { // Horizontal win conditions
-      console.log('Win');
-    }
-    else if ((boardReference[3]) && (boardReference[3] === boardReference[4]) && (boardReference[4] === boardReference[5])) {
-      console.log('Win');
-    }
-    else if ((boardReference[6]) && (boardReference[6] === boardReference[7]) && (boardReference[7] === boardReference[8])) {
-      console.log('Win');
-    }
+  const endScreen = document.querySelector(`div.game-end`);
+  const closeEndScreen = (document.querySelector(`div.result-head`)).lastElementChild;
+  closeEndScreen.addEventListener('click', function() {
+    endScreen.style.visibility = `hidden`;
+  })
 
-    else if ((boardReference[0]) && (boardReference[0] === boardReference[3]) && (boardReference[3] === boardReference[6])) { // Vertical win conditions
-      console.log('Win');
-    }
-    else if ((boardReference[1]) && (boardReference[1] === boardReference[4]) && (boardReference[4] === boardReference[7])) {
-      console.log('Win');
-    }
-    else if ((boardReference[2]) && (boardReference[2] === boardReference[5]) && (boardReference[5] === boardReference[8])) {
-      console.log('Win');
-    }
+  // Event Listener callbacks
+  function startCallback(e) {
+    turnCount = 1;
 
-    else if ((boardReference[0]) && (boardReference[0] === boardReference[4]) && (boardReference[4] === boardReference[8])) { // Diagonal win conditions
-      console.log('Win');
-    }
-    else if ((boardReference[2]) && (boardReference[2] === boardReference[4]) && (boardReference[4] === boardReference[6])) {
-      console.log('Win');
+    if(isGameActive) {
+      gameBoard.resetBoard();
+      e.target.textContent = `START`;
     }
 
     else {
-      for (const boardSpace in boardReference) {
-        if (!boardReference[boardSpace]) return; // Ensures board is full
-      }
-      console.log('Draw');
+      isGameActive = true;
+      e.target.textContent = `RESTART`;
     }
 
+    const firstPlayerName = (document.getElementById(`first`)).textContent;
+    const secondPlayerName = (document.getElementById(`second`)).textContent;
+    const firstPlayerMark = (document.querySelector(`p.mark-one`)).textContent;
+    const secondPlayerMark = (document.querySelector(`p.mark-two`)).textContent;
+
+    playerOne = Player(firstPlayerName, firstPlayerMark);
+    playerTwo = Player(secondPlayerName, secondPlayerMark);
+
+    activeMark = playerOne.mark;
   }
 
-  return { sendMoveToBoard, checkEnd, clearPlayingBoard };
+  function drawCallback(e) {
+    if (isGameActive) {
+      for (let i = 0; i < gameCells.length; i++) {
+        if (gameCells.item(i) === e.target && !(e.target.textContent)) {
+          gameBoard.drawToPage(i, activeMark);
+          let isGameOver = gameBoard.checkEnd(i);
+          if (isGameOver) {
+            const winMessage = document.querySelector(`.result-message`);
+            const sideMessage = (document.querySelector(`div.result-card`).lastElementChild);
+            winMessage.textContent = (activeMark === playerOne.mark ? `Player One Wins!` : `Player Two Wins!`);
+            sideMessage.textContent = `Thanks for playing!`
+            isGameActive = false;
+            endScreen.style.visibility = `visible`;
+          }
+          else if (typeof(isGameOver) === 'object') {
+            const winMessage = document.querySelector(`.result-message`);
+            const sideMessage = (document.querySelector(`div.result-card`).lastElementChild);
+            winMessage.textContent = `It's a Draw!`;
+            sideMessage.textContent = `Play again?`
+            isGameActive = false;
+            endScreen.style.visibility = `visible`;
+          }
+          else {
+            swapActiveMark();
+            turnCount++;
+          }
+        }
+      }
+    }
+  }
+
+  // Public & Private functions
+  const displayMove = (index, mark) => {
+    const cellReference = gameCells.item(index);
+    cellReference.textContent = mark;
+  }
+
+  const swapActiveMark = () => {
+    if (!isGameActive) return;
+    switch(activeMark) {
+      case playerOne.mark:
+        activeMark = playerTwo.mark;
+        break;
+      case playerTwo.mark:
+        activeMark = playerOne.mark;
+        break;
+      default:
+        console.log(`Error!`);
+        break;
+    }
+  }
+
+  return {
+    gameCells,
+    playerOne,
+    playerTwo,
+    playerAI,
+    isGameActive,
+    turnCount,
+    activeMark,
+    displayMove
+   };
 })();
 
-const displayController = (() => {
-  let upcomingMarker = `X`;
-  const boardCells = document.querySelectorAll(`div.gamecell`);
-  boardCells.forEach((cell) => {
 
-    cell.addEventListener('click', function() {
 
-      const indexRef = cell.dataset.index;
-      if (cell.textContent) return; // Return if move is played in space
-      gameBoard.sendMoveToBoard(indexRef, upcomingMarker); // Update gameboard
-      cell.textContent = upcomingMarker; // Update display
+const gameBoard = (() => {
+  let board = [``, ``, ``, ``, ``, ``, ``, ``, ``];
 
-      switch(upcomingMarker) { // Update new display marker
-        case `X`:
-          upcomingMarker = `O`;
-          break;
-        case `O`:
-          upcomingMarker = `X`;
-          break;
-        default:
-          console.log('ERROR');
-          break;
-      }
-      gameBoard.checkEnd();
-    });
-  })
+  const drawToPage = (index, mark) => {
+    board[index] = mark;
+    displayController.displayMove(index, mark);
+  }
 
   const resetBoard = () => {
-    gameBoard.clearPlayingBoard();
-    boardCells.forEach((cell) => {
+    board = [``, ``, ``, ``, ``, ``, ``, ``, ``];
+    (displayController.gameCells).forEach((cell) => {
       cell.textContent = ``;
     })
-    upcomingMarker = `X`;
   }
 
-  const openMenuButton = document.querySelector(`button.menu-open`);
-  openMenuButton.addEventListener('click', function() {
-    const modalMenu = document.querySelector(`div.menu`);
-    modalMenu.style.visibility = `visible`;
-  })
+  const winCombinations = [`012`, `345`, `678`, `036`, `147`, `258`, `048`, `246`];
 
-  const closeMenuButton = (document.querySelector(`div.menu-close`)).firstElementChild;
-  closeMenuButton.addEventListener('click', function() {
-    const modalMenu = document.querySelector(`div.menu`);
-    modalMenu.style.visibility = `hidden`;
-  })
+  const checkEnd = startIndex => {
+    let gameOver = false;
+    for (let i = 0; i < winCombinations.length; i++) {
+      if (winCombinations[i].includes(startIndex)) {
+        const testWin = winCombinations[i];
+        if (board[testWin.charAt(0)] === board[testWin.charAt(1)] && board[testWin.charAt(1)] === board[testWin.charAt(2)]) {
+          return true;
+        }
+      }
+    }
 
-  const resetButton = document.querySelector(`button.reset`);
-  resetButton.addEventListener('click', resetBoard);
+    gameOver = (board.includes(``) ? false : null);
+    return gameOver;
+  }
 
-  return { upcomingMarker, boardCells, resetBoard };
+  return { 
+    drawToPage,
+    resetBoard,
+    checkEnd
+   };
 })();
 
-const Player = (name, marker) => {
-  const getName = () => name;
-  const getMarker = () => marker;
 
-  return { getName, getMarker };
-};
 
-/* 
-To me it makes sense for the displayController to show the board on screen, and also add the proper ev listeners. Currently your gamecell's don't have anything that identifies them. Make sure each one corresponds to a board index so you can add an extra class name for example. And the simplest way is to just do one thing at a time. Add an event listener that marks an X. That works? Okay now switch from X to O. That works? Now make it so it doesn't allow for clicking on same cell. And so on
-*/
+const Player = (name, mark) => {
+  
+  return {
+    name,
+    mark
+   };
+}
+
+
+
+const loaderManager = (() => {
+  function resolveLoading() {
+    return new Promise(resolve => {
+      setTimeout(() => {
+       resolve(`none`); 
+      }, 5000);
+    });
+  }
+
+  async function asyncUnload() {
+    const loader = document.getElementById(`load`);
+    loader.style.display = await resolveLoading();
+  }
+
+  return {
+    asyncUnload
+  };
+})();
+
+// Global
+
+loaderManager.asyncUnload();
