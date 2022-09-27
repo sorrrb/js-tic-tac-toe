@@ -1,4 +1,4 @@
-# js-tic-tac-toe
+# tic-tac-toe
 A webpage implementation of a basic Tic-Tac-Toe game<br>
 
 [Live Demo](https://sorrrb.github.io/js-tic-tac-toe/)
