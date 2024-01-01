@@ -105,15 +105,33 @@ const gameController = (function (playerOneName = 'Player One', playerTwoName = 
         currentBoardState.forEach(row => {
           let currentRow = allEqual(row);
           if (currentRow) {
-            console.log('win') // properly finds win condition in top row for player one
+            const winner = getActivePlayer().name;
+            console.log(`Win for ${winner}`) // properly finds win condition in top row for player one
           }
         })
       })();
 
-      // Check for vertical wins
-      const checkColWin = (function () {
+      // in availableCells for connect4, .map(...) just populates a new array with ONLY the given column's available row cells
+      // this is after the board array's rows are filtered for row's where the column selected is empty
+      // this new filtered array now only contains arrays (rows) where the connect 4 column given (corresponding inner-array value) has empty values (0)
+      // then, the map method populates a new 1D array of cell objects, corresponding to the empty cells (in the empty rows) of the given column
 
-      })();
+      // Check for vertical wins
+      (function checkColWin(col) {
+        if (col >= currentBoardState.length) return; // Exit loop if passing invalid column
+        let currentColumn = [];
+        currentBoardState.forEach((row, index) => {
+          currentColumn.push(currentBoardState[index][col])
+        })
+        currentColumn = allEqual(currentColumn); // Check if column is equal after populating copy
+        if (currentColumn) {
+          const winner = getActivePlayer().name;
+          console.log(`Win for ${winner}`) // Properly finds win condition in left row for player one
+          col = currentBoardState.length; // Exit condition for winning 
+        }
+        checkColWin(++col);
+      })(0);
+
       // Check for diagonal wins
       const checkDiagWin = (function () {
 
