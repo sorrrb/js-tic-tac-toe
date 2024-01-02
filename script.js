@@ -1,14 +1,21 @@
-// Object to represent full gameboard for game of Tic-Tac-Toe
+/* Module - Represents the full playing board for a Tic-Tac-Toe game
+Returns:
+- getBoard [to retrieve board state]
+- printBoard [to print board state to the console]
+- takeSquare [to fill a square on the board]
+*/
 const gameboard = (function () {
-  const rows = 3;
   const cols = 3;
+  const rows = 3;
   const board = [];
 
-  // 2D array to represent the gameboard
-  // Row 0 is represented as the top row, Column 0 as the left-most column
-  // [ [0, 0, 0],
-  //   [0, 0, 0],
-  //   [0, 0, 0] ]
+  /* 2D Array
+  [ [0, 0, 0], 
+    [0, 0, 0],
+    [0, 0, 0] ]
+  - row 0 represents top row
+  - col 0 represents left-most column  
+  */
   for (let i = 0; i < rows; i++) {
     board[i] = [];
     for (let j = 0; j < cols; j++) {
@@ -18,51 +25,56 @@ const gameboard = (function () {
 
   const getBoard = () => board;
 
-  // Used to populate the board for console version only
-  const displayBoard = () => {
-    const consoleBoard = board.map((row) => row.map((cell) => cell.getValue()));
+  const printBoard = () => {
+    const consoleBoard = board.map((row) => row.map((square) => square.getToken())); // Loop through rows, then columns to find value of each square
     console.log(consoleBoard);
   }
 
-  // Used to fill a square with a player's token
-  const fillSquare = (row, column, token) => {
-    if (board[row][column].getValue()) return; // Exit condition if square is filled
-    board[row][column].setValue(token);
+  const takeSquare = (row, column, token) => {
+    if (board[row][column].getToken()) return;
+    board[row][column].addToken(token);
   }
 
-  return { getBoard, displayBoard, fillSquare }
+  return { getBoard, printBoard, takeSquare };
 })();
 
 
 
 
 
-// Object to represent individual squares on a Tic-Tac-Toe matrix
-// (has prop 'value' which can hold 1 of 3 values)
-// 0 - [denotes empty cell]
-// 1 - [denotes first player's token X]
-// 2 - [denotes second player's token O]
+/* Factory Function - Represents an individual square on a Tic-Tac-Toe board
+Returns:
+- getToken [method] [grabs token of referenced square]
+- addToken [method] [adds token to referenced square]
+value property represents status of game square, holding 1 of 3 number values
+0 [represents an empty square]
+1 [represents a square occupied by Player One's token]
+2 [represents a square occupied by Player Two's token] */
 function Square() {
   let value = 0;
 
-  const getValue = () => value;
+  const getToken = () => value;
 
-  const setValue = (newValue) => {
-    value = newValue;
-  }
+  const addToken = token => {
+    value = token;
+  };
 
-  return { getValue, setValue };
+  return { getToken, addToken };
 }
 
 
 
 
 
-// Object to handle flow control of game
-// Determines/sets active player flow, player
-// names and win logic
-const gameController = (function (playerOneName = 'Player One', playerTwoName = 'Player Two') {
+/* Module - Represents the controller for a game of Tic-Tac-Toe, handling game state, flow and win logic
+Returns:
+- getActivePlayer [method] [grabs current active player]
+- 
+*/
+const gameController = (function () {
   const board = gameboard;
+  const playerOneName = 'Player One';
+  const playerTwoName = 'Player Two';
   const players = [
     {
       name: playerOneName,
@@ -74,83 +86,30 @@ const gameController = (function (playerOneName = 'Player One', playerTwoName = 
     }
   ];
 
-  let activePlayer = players[0]; // Sets default first to move to player one
+  let activePlayer = players[0]; // Set default active player to P1
+
+  const getActivePlayer = () => activePlayer;
 
   const switchActivePlayer = () => {
     activePlayer = (activePlayer === players[0] ? players[1] : players[0]);
   }
 
-  const getActivePlayer = () => activePlayer;
-
   const printNewRound = () => {
-    board.displayBoard(); // Populates console board
-    console.log(`${getActivePlayer().name}'s turn..`); // Logs player's turn
+    board.printBoard();
+    console.log(`It is ${getActivePlayer().name}'s turn.`);
   }
 
   const playRound = (row, column) => {
-    console.log(`Playing ${getActivePlayer().name}'s move at (${row}, ${column})`); // Logs players move
-    board.fillSquare(row, column, getActivePlayer().token); // Plays move onto board
+    console.log(`Playing move at [${row}, ${column}]`);
+    board.takeSquare(row, column, getActivePlayer().token);
 
-    const gameOver = () => {
-      const currentBoardState = board.getBoard();
+    // Win logic goes here
 
-      // Helper function to check if all array values are equal
-      const allEqual = arr => {
-        if (!arr[0].getValue()) return false;
-        return arr.every(square => square.getValue() === arr[0].getValue());
-      }
-
-      // Check for horizontal wins
-      const checkRowWin = (function () {
-        currentBoardState.forEach(row => {
-          let currentRow = allEqual(row);
-          if (currentRow) {
-            const winner = getActivePlayer().name;
-            console.log(`Win for ${winner}`) // properly finds win condition in top row for player one
-          }
-        })
-      })();
-
-      // in availableCells for connect4, .map(...) just populates a new array with ONLY the given column's available row cells
-      // this is after the board array's rows are filtered for row's where the column selected is empty
-      // this new filtered array now only contains arrays (rows) where the connect 4 column given (corresponding inner-array value) has empty values (0)
-      // then, the map method populates a new 1D array of cell objects, corresponding to the empty cells (in the empty rows) of the given column
-
-      // Check for vertical wins
-      (function checkColWin(col) {
-        if (col >= currentBoardState.length) return; // Exit loop if passing invalid column
-        let currentColumn = [];
-        currentBoardState.forEach((row, index) => {
-          currentColumn.push(currentBoardState[index][col])
-        })
-        currentColumn = allEqual(currentColumn); // Check if column is equal after populating copy
-        if (currentColumn) {
-          const winner = getActivePlayer().name;
-          console.log(`Win for ${winner}`) // Properly finds win condition in left row for player one
-          col = currentBoardState.length; // Exit condition for winning 
-        }
-        checkColWin(++col);
-      })(0);
-
-      // Check for diagonal wins
-      const checkDiagWin = (function () {
-
-      })();
-
-      // Check for draws
-      const checkDraw = (function () {
-
-      })();
-    }
-
-    gameOver();
-    // check for win logic, win message, etc
-
-    switchActivePlayer(); // Switches active player
-    printNewRound(); // Begins next round
+    switchActivePlayer(); // Switches player
+    printNewRound(); // Starts next round
   }
 
-  printNewRound(); // Initialize game
+  printNewRound(); // Starts the game
 
-  return { getActivePlayer, playRound };
+  return { playRound };
 })();
