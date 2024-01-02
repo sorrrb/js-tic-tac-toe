@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header, .footer {
+  width: 100%;
+  text-align: center;
+  background-color: forestgreen;
+}
+
+.header > h1, footer > p {
+  flex-shrink: 0;
+}
+
+div.game {
+  display: grid;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  gap: 2rem;
+
+  background-color: black;
+}
+
+div.square {
+  height: 150px;
+  width: 150px;
+
+  background-color: white;
+}

@@ -1,9 +1,4 @@
-/* Module - Represents the full playing board for a Tic-Tac-Toe game
-Returns:
-- getBoard [to retrieve board state]
-- printBoard [to print board state to the console]
-- takeSquare [to fill a square on the board]
-*/
+// Module - Represents the full playing board for a Tic-Tac-Toe game
 const gameboard = (function () {
   const cols = 3;
   const rows = 3;
@@ -43,13 +38,10 @@ const gameboard = (function () {
 
 
 /* Factory Function - Represents an individual square on a Tic-Tac-Toe board
-Returns:
-- getToken [method] [grabs token of referenced square]
-- addToken [method] [adds token to referenced square]
-value property represents status of game square, holding 1 of 3 number values
-0 [represents an empty square]
-1 [represents a square occupied by Player One's token]
-2 [represents a square occupied by Player Two's token] */
+- value prop represents status of game square, holding 1 of 3 number values:
+- 0 [represents an empty square]
+- 1 [represents a square occupied by Player One's token]
+- 2 [represents a square occupied by Player Two's token] */
 function Square() {
   let value = 0;
 
@@ -66,11 +58,7 @@ function Square() {
 
 
 
-/* Module - Represents the controller for a game of Tic-Tac-Toe, handling game state, flow and win logic
-Returns:
-- getActivePlayer [method] [grabs current active player]
-- 
-*/
+// Module - Represents the logic controller for a game of Tic-Tac-Toe, handling game state, flow and win logic
 const gameController = (function () {
   const board = gameboard;
   const playerOneName = 'Player One';
@@ -183,4 +171,13 @@ const gameController = (function () {
   printNewRound(); // Starts the game
 
   return { playRound };
+})();
+
+
+
+
+
+// Module - represents the display controller for a game of Tic-Tac-Toe
+const displayController = (function () {
+
 })();
