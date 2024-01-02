@@ -89,9 +89,9 @@ const gameController = (function () {
   let winner = null; // Set default winner to null
   let isGameOver = false; // Set default game state as active
 
-  const setWinner = () => {
+  const setWinner = (player = getActivePlayer().name) => {
     isGameOver = true;
-    winner = getActivePlayer().name;
+    winner = (player === null ? null : player);
   }
 
   let activePlayer = players[0]; // Set default active player to P1
@@ -114,7 +114,7 @@ const gameController = (function () {
     const checkEnd = (function () {
       const boardState = board.getBoard();
 
-      // Check given object array to see if all objects (squares) value is equal
+      // Helper function to check given 3 element flat object array to see if all object's (square's) token value is equal
       const checkAllEqual = testArr => {
         const emptySquares = testArr.filter((square) => square.getToken() === 0);
         if (emptySquares.length > 0) return false; // Check if a square in a given 3x1 line is empty
@@ -122,10 +122,21 @@ const gameController = (function () {
         return (testArr.every((square) => square.getToken() === testArr[0].getToken() ? true : false)); // https://dev.to/rajnishkatharotiya/function-to-check-if-all-records-are-equal-in-array-javascript-3mo3#:~:text=Javascript%20Useful%20Snippets%20%E2%80%94%20allEqual(),allEqual%20%3D%20arr%20%3D%3E%20arr.
       };
 
+      // Helper function to check given 9 element flat object array for 1st/5th/9th or 3rd/5th/7th element equality
+      const checkNthEquality = testArr => {
+        const middleSquare = testArr[4];
+        let foundEqual = false;
+        if (middleSquare.getToken() === 0) foundEqual = false; // Assigns false if middle square is empty
+
+        const checkWinOne = checkAllEqual([testArr[0], middleSquare, testArr[8]]);
+        const checkWinTwo = checkAllEqual([testArr[2], middleSquare, testArr[6]]);
+        return (checkWinOne || checkWinTwo ? true : false);
+      }
+
       // Check board for horizontal wins
       const checkRow = (function () {
-        const foundWin = boardState.filter((row) => checkAllEqual(row));
-        if (foundWin.length > 0) setWinner();
+        const findWin = boardState.filter((row) => checkAllEqual(row));
+        if (findWin.length > 0) setWinner();
       })();
 
       // Check board for vertical wins
@@ -133,20 +144,28 @@ const gameController = (function () {
         const matrixLength = boardState.length;
         const reformatBoard = [];
 
-        for (let j = 0; j < matrixLength; j++) { // Transposes dimensions of 2D array
+        for (let j = 0; j < matrixLength; j++) { // Transposes dimensions of 2D array for helper function
           reformatBoard[j] = Array(matrixLength);
           for (let i = 0; i < matrixLength; i++) {
             reformatBoard[j][i] = boardState[i][j];
           }
         }
 
-        const foundWin = reformatBoard.filter((column) => checkAllEqual(column));
-        if (foundWin.length > 0) setWinner();
+        const findWin = reformatBoard.filter((column) => checkAllEqual(column));
+        if (findWin.length > 0) setWinner();
+      })();
+
+      // Check board for diagonal wins
+      const checkDiag = (function () {
+        const flatBoard = boardState.flat();
+        const foundWin = checkNthEquality(flatBoard); 
+        if (foundWin) setWinner();
       })();
 
       // Check board for a draw
       const checkDraw = (function () {
-
+        const emptySquares = boardState.flat().filter((square) => square.getToken() === 0);
+        if (emptySquares.length === 0) setWinner(null);
       })();
     })();
 
