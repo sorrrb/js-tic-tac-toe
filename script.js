@@ -135,7 +135,7 @@ function GameController() {
         const matrixLength = boardState.length;
         const reformatBoard = [];
 
-        for (let j = 0; j < matrixLength; j++) { // Transposes dimensions of 2D array for helper function
+        for (let j = 0; j < matrixLength; j++) { // Transposes dimensions of 2D array for helper function --- https://stackoverflow.com/questions/17428587/transposing-a-2d-array-in-javascript
           reformatBoard[j] = Array(matrixLength);
           for (let i = 0; i < matrixLength; i++) {
             reformatBoard[j][i] = boardState[i][j];
@@ -155,6 +155,7 @@ function GameController() {
 
       // Check board for a draw
       const checkDraw = (function () {
+        if (isGameOver) return;
         const emptySquares = boardState.flat().filter((square) => square.getToken() === 0);
         if (emptySquares.length === 0) setWinner(null);
       })();
