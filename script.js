@@ -37,7 +37,7 @@ const gameboard = (function () {
 
 
 
-/* Factory Function - Represents an individual square on a Tic-Tac-Toe board
+/* Factory - Represents an individual square on a Tic-Tac-Toe board
 - value prop represents status of game square, holding 1 of 3 number values:
 - 0 [represents an empty square]
 - 1 [represents a square occupied by Player One's token]
@@ -58,8 +58,8 @@ function Square() {
 
 
 
-// Module - Represents the logic controller for a game of Tic-Tac-Toe, handling game state, flow and win logic
-const gameController = (function () {
+// Factory - Represents the logic controller for a game of Tic-Tac-Toe, handling game state, flow and win logic
+function GameController() {
   const board = gameboard;
   const playerOneName = 'Player One';
   const playerTwoName = 'Player Two';
@@ -170,8 +170,8 @@ const gameController = (function () {
 
   printNewRound(); // Starts the game
 
-  return { playRound };
-})();
+  return { playRound, getActivePlayer, getBoard: board.getBoard };
+};
 
 
 
@@ -179,5 +179,39 @@ const gameController = (function () {
 
 // Module - represents the display controller for a game of Tic-Tac-Toe
 const displayController = (function () {
+  const game = GameController(); // Reference to and initialization of GameController
+  const displayBoard = document.querySelector('.game');
+  const gameMessage = document.querySelector('.turn');
 
+  const updateScreen = () => {
+    displayBoard.textContent = ''; // Reset board
+
+    const board = game.getBoard(); // Grab updated board & player turn
+    const turn = game.getActivePlayer().name;
+
+    gameMessage.textContent = `[ ${turn}'s  turn ]`; // Display next player's turn
+
+    board.forEach((row, i) => { // Populate board with squares
+      row.forEach((square, j) => {
+        const squareButton = document.createElement('button');
+        squareButton.classList.add('square');
+        squareButton.dataset.rowIndex = i; // Adds dataset attribute to track row of each button
+        squareButton.dataset.colIndex = j; // Adds dataset attribute to track column of each button
+        squareButton.textContent = (square.getToken() === 0 ? '' : square.getToken());
+        displayBoard.appendChild(squareButton);
+      })
+    });
+  }
+
+  function clickHandler(e) {
+    const row = e.target.dataset.rowIndex;
+    const column = e.target.dataset.colIndex;
+    if (!row || !column) return;
+    game.playRound(row, column);
+    updateScreen();
+  }
+
+  displayBoard.addEventListener('click', clickHandler);
+
+  updateScreen(); // Initializes display 
 })();

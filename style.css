@@ -11,27 +11,48 @@ body {
   align-items: center;
 }
 
+.game > button {
+  border: none;
+}
+
 .header, .footer {
   width: 100%;
+
+  background-color: slategray;
   text-align: center;
-  background-color: forestgreen;
 }
 
-.header > h1, footer > p {
-  flex-shrink: 0;
-}
+.game {
+  height: 600px;
+  width: 600px;
 
-div.game {
   display: grid;
   grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-  gap: 2rem;
+  gap: 16px;
 
-  background-color: black;
+  background-color: rgb(0 0 0 / 0.1);
+  border: 1px solid rgb(0 0 0 / 0.125);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-div.square {
-  height: 150px;
-  width: 150px;
+.interface {
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+}
+
+.square {
+  display: grid;
+  place-items: center;
+  text-align: center;
 
   background-color: white;
+  font-weight: bold;
+  font-size: 7.5rem;
+  cursor: pointer;
+}
+
+.turn {
+  text-align: center;
+  margin: 0;
 }
