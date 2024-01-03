@@ -84,6 +84,8 @@ function GameController() {
     winner = (player === null ? null : player);
   }
 
+  const getWinner = () => winner;
+
   let activePlayer = players[0]; // Set default active player to P1
 
   const getActivePlayer = () => activePlayer;
@@ -153,15 +155,12 @@ function GameController() {
       })();
     })();
 
-    if (isGameOver) {
-      const hasWinner = (winner === null ? false : true);
-      return;
-    }
+    if (isGameOver) return;
 
     switchActivePlayer(); // Switches player
   }
 
-  return { playRound, getActivePlayer, getBoard: board.getBoard, checkGameOver };
+  return { playRound, getActivePlayer, getBoard: board.getBoard, checkGameOver, getWinner };
 };
 
 
@@ -181,15 +180,13 @@ const displayController = (function () {
     const board = game.getBoard(); // Grab updated board & player turn
     const turn = game.getActivePlayer().name;
     const end = game.checkGameOver();
+    const winner = game.getWinner();
     
-    switch(end) {
-      case true:
-        gameMessage.textContent = `[ ${turn} wins! Play again?]`;
-        displayBoard.removeEventListener('click', clickHandler);
-        restartButton.style.visibility = 'visible';
-        break;
-      default:
-        gameMessage.textContent = `[ ${turn}'s turn ]`; // Display next player's turn
+    if (end) {
+      displayBoard.removeEventListener('click', clickHandler);
+      restartButton.style.visibility = '';
+      if (winner) gameMessage.textContent = `[${turn} wins!]`;
+      else gameMessage.textContent = `[It's a draw!]`;
     }
 
     board.forEach((row, i) => { // Populate board with squares
@@ -213,12 +210,19 @@ const displayController = (function () {
     updateScreen();
   }
 
-  function reloadHandler(e) {
-    location.replace(location.href);
+  function loadHandler(e) {
+    switch(e.target.textContent) { // Check textContent of Start button
+      case 'START':
+        e.target.style.visibility = 'hidden';
+        e.target.textContent = 'PLAY AGAIN?';
+        displayBoard.addEventListener('click', clickHandler);
+        break;
+      default:
+        location.replace(location.href);
+    }
   }
 
-  displayBoard.addEventListener('click', clickHandler);
-  restartButton.addEventListener('click', reloadHandler);
+  restartButton.addEventListener('click', loadHandler);
 
   updateScreen(); // Initializes display 
 })();

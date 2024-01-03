@@ -9,6 +9,8 @@ body {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
 
 .game > button {
@@ -38,7 +40,42 @@ body {
 .interface {
   display: grid;
   grid-template-rows: auto auto 1fr;
-  gap: 32px;
+  gap: 16px;
+}
+
+.interface > hr {
+  width: 100%;
+}
+
+.controls, .player {
+  display: flex;
+  flex-direction: column;
+}
+
+.controls {
+  align-items: center;
+}
+
+.player {
+  font-size: 1.5rem;
+  font-weight: 900;
+}
+
+.player > label {
+  padding: 4px 8px;
+
+  background-color: rgb(0 0 0 / 0.1);
+  border: 1px solid black;
+}
+
+.two {
+  text-align: end;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .square {
@@ -52,17 +89,28 @@ body {
   cursor: pointer;
 }
 
+.turn, .restart, .player > label {
+  border-radius: 8px;
+}
+
 .turn {
   margin: 0;
 
+  color: black;
   text-align: center;
 }
 
 .restart {
+  padding: 8px 24px;
+  margin-bottom: 48px;
+
   display: flex;
   justify-self: center;
 
-  visibility: hidden;
+  background-color: rgb(0 0 0 / 0.1);
+  border: 1px solid rgb(0 0 0 / 0.25);
+  font-size: 1.1rem;
+  font-weight: bold;
   cursor: pointer;
 }
 
