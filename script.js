@@ -48,7 +48,7 @@ function Square() {
   const getToken = () => value;
 
   const addToken = token => {
-    value = token;
+    value = (token === 1 ? 'X' : 'O');
   };
 
   return { getToken, addToken };
@@ -77,6 +77,8 @@ function GameController() {
   let winner = null; // Set default winner to null
   let isGameOver = false; // Set default game state as active
 
+  const checkGameOver = () => isGameOver;
+
   const setWinner = (player = getActivePlayer().name) => {
     isGameOver = true;
     winner = (player === null ? null : player);
@@ -90,13 +92,7 @@ function GameController() {
     activePlayer = (activePlayer === players[0] ? players[1] : players[0]);
   };
 
-  const printNewRound = () => {
-    board.printBoard();
-    console.log(`It is ${getActivePlayer().name}'s turn.`);
-  };
-
   const playRound = (row, column) => {
-    console.log(`Playing move at [${row}, ${column}]`);
     board.takeSquare(row, column, getActivePlayer().token);
 
     const checkEnd = (function () {
@@ -159,18 +155,13 @@ function GameController() {
 
     if (isGameOver) {
       const hasWinner = (winner === null ? false : true);
-      board.printBoard();
-      if (hasWinner) return (`${winner} wins! Play again?`);
-      return `It's a tie! Play again?`;
+      return;
     }
 
     switchActivePlayer(); // Switches player
-    printNewRound(); // Starts next round
   }
 
-  printNewRound(); // Starts the game
-
-  return { playRound, getActivePlayer, getBoard: board.getBoard };
+  return { playRound, getActivePlayer, getBoard: board.getBoard, checkGameOver };
 };
 
 
@@ -182,14 +173,24 @@ const displayController = (function () {
   const game = GameController(); // Reference to and initialization of GameController
   const displayBoard = document.querySelector('.game');
   const gameMessage = document.querySelector('.turn');
+  const restartButton = document.querySelector('.restart');
 
   const updateScreen = () => {
     displayBoard.textContent = ''; // Reset board
 
     const board = game.getBoard(); // Grab updated board & player turn
     const turn = game.getActivePlayer().name;
-
-    gameMessage.textContent = `[ ${turn}'s  turn ]`; // Display next player's turn
+    const end = game.checkGameOver();
+    
+    switch(end) {
+      case true:
+        gameMessage.textContent = `[ ${turn} wins! Play again?]`;
+        displayBoard.removeEventListener('click', clickHandler);
+        restartButton.style.visibility = 'visible';
+        break;
+      default:
+        gameMessage.textContent = `[ ${turn}'s turn ]`; // Display next player's turn
+    }
 
     board.forEach((row, i) => { // Populate board with squares
       row.forEach((square, j) => {
@@ -207,11 +208,17 @@ const displayController = (function () {
     const row = e.target.dataset.rowIndex;
     const column = e.target.dataset.colIndex;
     if (!row || !column) return;
+    else if (e.target.textContent) return;
     game.playRound(row, column);
     updateScreen();
   }
 
+  function reloadHandler(e) {
+    location.replace(location.href);
+  }
+
   displayBoard.addEventListener('click', clickHandler);
+  restartButton.addEventListener('click', reloadHandler);
 
   updateScreen(); // Initializes display 
 })();

@@ -36,9 +36,9 @@ body {
 }
 
 .interface {
-  display: flex;
-  flex-direction: column;
-  gap: 64px;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 32px;
 }
 
 .square {
@@ -53,6 +53,19 @@ body {
 }
 
 .turn {
-  text-align: center;
   margin: 0;
+
+  text-align: center;
+}
+
+.restart {
+  display: flex;
+  justify-self: center;
+
+  visibility: hidden;
+  cursor: pointer;
+}
+
+.hide {
+  cursor: default;
 }
