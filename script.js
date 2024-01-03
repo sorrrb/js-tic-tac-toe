@@ -74,6 +74,11 @@ function GameController() {
     }
   ];
 
+  const setPlayerName = (player, newName) => {
+    const checkPlayer = (player === 0 ? players[0] : players[1]);
+    checkPlayer.name = newName;
+  }
+
   let winner = null; // Set default winner to null
   let isGameOver = false; // Set default game state as active
 
@@ -160,7 +165,7 @@ function GameController() {
     switchActivePlayer(); // Switches player
   }
 
-  return { playRound, getActivePlayer, getBoard: board.getBoard, checkGameOver, getWinner };
+  return { playRound, getActivePlayer, getBoard: board.getBoard, checkGameOver, getWinner, setPlayerName };
 };
 
 
@@ -213,14 +218,30 @@ const displayController = (function () {
   function loadHandler(e) {
     switch(e.target.textContent) { // Check textContent of Start button
       case 'START':
+        let newPlayerOneName;
+        let newPlayerTwoName;
         e.target.style.visibility = 'hidden';
         e.target.textContent = 'PLAY AGAIN?';
+        newPlayerOneName = document.querySelector('.one').firstElementChild.value;
+        newPlayerTwoName = document.querySelector('.two').firstElementChild.value;
+        if (!document.querySelector('.one').firstElementChild.value) newPlayerOneName = 'Player One';
+        if (!document.querySelector('.two').firstElementChild.value) newPlayerTwoName = 'Player Two';
+        game.setPlayerName(0, newPlayerOneName);
+        game.setPlayerName(1, newPlayerTwoName);
         displayBoard.addEventListener('click', clickHandler);
         break;
       default:
         location.replace(location.href);
     }
   }
+
+  const inputFields = document.querySelectorAll('input');
+  inputFields.forEach((textbox) => {
+    textbox.addEventListener('change', e => {
+      e.target.setAttribute('readonly', true);
+      e.target.setAttribute('disabled', 'disabled');
+    });
+  });
 
   restartButton.addEventListener('click', loadHandler);
 
