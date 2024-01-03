@@ -10,12 +10,18 @@ body {
   justify-content: space-between;
   align-items: center;
 
-  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 a {
   color: inherit;
   text-decoration: none;
+}
+
+h1 {
+  font-family: Helvetica, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
 }
 
 .game > button {
@@ -26,6 +32,7 @@ a {
   width: 100%;
 
   background-color: slategray;
+  color: rgb(0 0 0 / 0.675);
   text-align: center;
 }
 
@@ -62,6 +69,9 @@ a {
 }
 
 .player {
+  align-items: center;
+  gap: 8px;
+
   font-size: 1.5rem;
   font-weight: 900;
 }
@@ -69,10 +79,20 @@ a {
 .player > input {
   padding: 12px 32px;
 
+  border-radius: 4px;
+  font-size: 1.25rem;
+}
+
+.player > label {
+  padding: 8px 16px;
+
+  border-radius: 8px;
+  font-size: 1.75rem;
+}
+
+.player > input, .player > label {
   background-color: rgb(0 0 0 / 0.1);
   border: 1px solid black;
-  border-radius: 4px;
-  font-size: 1.2rem;
 }
 
 .two {
@@ -97,7 +117,7 @@ a {
   cursor: pointer;
 }
 
-.turn, .restart, .player > label {
+.turn, .restart {
   border-radius: 8px;
 }
 
@@ -122,14 +142,6 @@ a {
   cursor: pointer;
 }
 
-.hide {
-  cursor: default;
-}
-
-.footer {
-  color: antiquewhite;
-}
-
 .foot-wrapper, .foot-wrapper > a {
   display: flex;
   justify-content: center;
@@ -138,4 +150,9 @@ a {
 
 .foot-wrapper > a {
   gap: 6px;
+  font-weight: 900;
+}
+
+#p2name {
+  text-align: end;
 }

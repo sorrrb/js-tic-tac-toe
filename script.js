@@ -240,6 +240,7 @@ const displayController = (function () {
     textbox.addEventListener('change', e => {
       e.target.setAttribute('readonly', true);
       e.target.setAttribute('disabled', 'disabled');
+      e.target.style.color = 'black';
     });
   });
 
